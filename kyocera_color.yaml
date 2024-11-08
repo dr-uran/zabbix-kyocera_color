@@ -1,0 +1,535 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: 0431e3da8ecc4ab2ab4d66dd40ea44b1
+      name: MFU
+  templates:
+    - uuid: cadee6c0ef844098badea93ed11a7989
+      template: Kyocera_color
+      name: 'Цветные МФУ Kyocera'
+      description: |
+        ## Overview
+        
+        Шаблон для мониторинга цветного принтера Kyocera 6130
+        
+        
+        Переменные:
+        
+        
+        Cartridge toner level % - cyan
+        
+        
+        Current cartridge toner level - black 
+        
+        
+        Max cartridge toner level - cyan
+        
+        
+        Current cartridge toner level - cyan 
+        
+        
+        Max cartridge toner level - magenta
+        
+        
+        Current cartridge toner level - magenta 
+        
+        
+        Max cartridge toner level - yellow
+        
+        
+        Current cartridge toner level - yellow 
+        
+        
+        Max cartridge toner level - black
+        
+        
+        Cartridge toner level % - magenta
+        
+        
+        Printer model
+        
+        
+        Cartridge toner level % - yellow
+        
+        
+        Pages printed - total
+        
+        
+        Printer location
+        
+        
+        Serial number
+      groups:
+        - name: MFU
+      items:
+        - uuid: d96c6a1aa72445008f30d7fa0c1a16c7
+          name: 'Модель картриджа - чёрного'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.43.11.1.1.6.1.4
+          key: cartridge.model.black
+          delay: 12h
+          history: 1d
+          trends: '0'
+          value_type: TEXT
+          tags:
+            - tag: Application
+              value: 'Printer information'
+        - uuid: bed726e5a035493d87eeb1c28a46dd26
+          name: 'Модель картриджа - голубого'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.43.11.1.1.6.1.1
+          key: cartridge.model.cyan
+          delay: 12h
+          history: 1d
+          trends: '0'
+          value_type: TEXT
+          tags:
+            - tag: Application
+              value: 'Printer information'
+        - uuid: 9303cc47ba1d4ab19c5df9130884935b
+          name: 'Модель картриджа - пурпурного'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.43.11.1.1.6.1.2
+          key: cartridge.model.magenta
+          delay: 12h
+          history: 1d
+          trends: '0'
+          value_type: TEXT
+          tags:
+            - tag: Application
+              value: 'Printer information'
+        - uuid: 316888c861c84c089ba3d06e2691f85a
+          name: 'Модель картриджа - жёлтого'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.43.11.1.1.6.1.3
+          key: cartridge.model.yellow
+          delay: 12h
+          history: 1d
+          trends: '0'
+          value_type: TEXT
+          tags:
+            - tag: Application
+              value: 'Printer information'
+        - uuid: 69227f34479643db8e1c50850bcbd388
+          name: 'Откопировано страниц'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.1347.42.3.1.3.1.1.2
+          key: copy.pages
+          delay: 10m
+          history: 365d
+        - uuid: 54c62fa5520047e4bbcbca208897ba57
+          name: 'Код ошибки'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.2.1.25.3.5.1.2.1
+          key: error.printer
+          delay: 10s
+          history: 90d
+          trends: '0'
+          value_type: CHAR
+          triggers:
+            - uuid: 03e25a51dea5449d982871dfdf6beb49
+              expression: last(/Kyocera_color/error.printer)=5
+              name: 'Бумага застряла в принтере. Нужно вытащить бумагу'
+              priority: INFO
+            - uuid: 61f6b59505b04196a77bad574b7e1403
+              expression: last(/Kyocera_color/error.printer)=06
+              name: 'Замятие бумаги. Произошла ошибка.'
+              priority: INFO
+            - uuid: 91f24f54f5d34899a08579f771fc0bd9
+              expression: last(/Kyocera_color/error.printer)=7
+              name: 'Необходим сервис. Требуется внимание специалиста.'
+              priority: HIGH
+            - uuid: 2a3d638f1dd34c2bb9acfcc46109b9d6
+              expression: last(/Kyocera_color/error.printer)=1
+              name: 'Нет бумаги в принтере'
+              priority: INFO
+            - uuid: 768d0afc43b24457aebf6ad1afe2321d
+              expression: last(/Kyocera_color/error.printer)=4
+              name: 'Открыта дверца принтера'
+              priority: INFO
+            - uuid: c1076c0b419d4e8ca8feebeca03d3ee9
+              expression: last(/Kyocera_color/error.printer)=1
+              name: 'Узел проявки не установлен или принтер требует внимания'
+              priority: HIGH
+        - uuid: e51a910b595b4ebd9bb0e4ab378d4a13
+          name: 'Осталось распечатать страниц - чёрный'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.43.11.1.1.9.1.4
+          key: left.printed.pages.black
+          delay: 10m
+          history: 1d
+          trends: 10d
+          tags:
+            - tag: Application
+              value: 'Consumables level'
+        - uuid: 70ef4a87337745dc899a7479fe7a5d8c
+          name: 'Осталось распечатать страниц -  голубой'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.43.11.1.1.9.1.1
+          key: left.printed.pages.cyan
+          delay: 10m
+          history: 1d
+          trends: 10d
+          tags:
+            - tag: Application
+              value: 'Consumables level'
+        - uuid: a2c556487e1440abb1d4222ae813651b
+          name: 'Осталось распечатать страниц - пурпурный'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.43.11.1.1.9.1.2
+          key: left.printed.pages.magenta
+          delay: 10m
+          history: 1d
+          trends: 10d
+          tags:
+            - tag: Application
+              value: 'Consumables level'
+        - uuid: 491666f64370435184e685e14371471d
+          name: 'Осталось распечатать страниц - жёлтый'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.43.11.1.1.9.1.3
+          key: left.printed.pages.yellow
+          delay: 10m
+          history: 1d
+          trends: 10d
+          tags:
+            - tag: Application
+              value: 'Consumables level'
+        - uuid: be32df4d2da34be7a3c96fba4b322777
+          name: 'MAC адрес'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.2.1.2.2.1.6.1
+          key: mac.printer
+          delay: 24h
+          history: 90d
+          trends: '0'
+          value_type: CHAR
+          inventory_link: MACADDRESS_A
+        - uuid: 85749742d7f24d3e900f28dc997ae8b5
+          name: 'Ресурс картриджа страниц - чёрного'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.43.11.1.1.8.1.4
+          key: max.toner.pages.black
+          delay: 10m
+          history: 1d
+          trends: 10d
+          tags:
+            - tag: Application
+              value: 'Consumables level'
+        - uuid: fa3b9378070841a28e2bd85d5d390eff
+          name: 'Ресурс картриджа страниц - голубого'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.43.11.1.1.8.1.1
+          key: max.toner.pages.cyan
+          delay: 10m
+          history: 1d
+          trends: 10d
+          tags:
+            - tag: Application
+              value: 'Consumables level'
+        - uuid: 64b80d5dcc5646e7b435579b08d9705a
+          name: 'Ресурс картриджа страниц - пурпурного'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.43.11.1.1.8.1.2
+          key: max.toner.pages.magenta
+          delay: 10m
+          history: 1d
+          trends: 10d
+          tags:
+            - tag: Application
+              value: 'Consumables level'
+        - uuid: 11eae4b9772e41f796fd6b1ff9e45d9d
+          name: 'Ресурс картриджа страниц- жёлтого'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.43.11.1.1.8.1.3
+          key: max.toner.pages.yellow
+          delay: 10m
+          history: 1d
+          trends: 10d
+          tags:
+            - tag: Application
+              value: 'Consumables level'
+        - uuid: 996b18998f5849618dabefeb2cbf4740
+          name: 'Модель принтера'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.43.5.1.1.16.1
+          key: model.printer
+          delay: 12h
+          history: 90d
+          trends: '0'
+          value_type: TEXT
+          inventory_link: TYPE
+          tags:
+            - tag: Application
+              value: 'Printer information'
+        - uuid: 8156b4c80b834e9c87109856cd119a3a
+          name: 'Отпечатано страниц всего'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.1347.43.10.1.1.12.1.1
+          key: pages.printed.total
+          delay: 10m
+          history: 365d
+          trends: '0'
+          tags:
+            - tag: Application
+              value: 'Pages printed'
+        - uuid: 36abf6f7a95841729cbd619912ff00de
+          name: 'Отпечатано страниц всего'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.1347.43.10.1.1.12.1.1
+          key: printed.pages.total
+          delay: 10m
+          history: 365d
+        - uuid: afcd8a2433e54e6ba772e5342b5ddd0d
+          name: 'Отсканировано и откопировано страниц'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.1347.46.10.1.1.5.3
+          key: scan.copy.pages.total
+          delay: 1h
+          history: 90d
+        - uuid: d2dc5f41b8a24dec91c9ac84a677e49a
+          name: 'Отсканировано страниц'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.1347.42.3.1.4.1.1.1
+          key: scan.pages
+          delay: 1h
+          history: 90d
+        - uuid: f807e8ea8efa412686ae12d8286d3c5f
+          name: 'Серийный номер'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.43.5.1.1.17.1
+          key: serialnumber.ptinter
+          delay: 12h
+          history: 90d
+          trends: '0'
+          value_type: TEXT
+          tags:
+            - tag: Application
+              value: 'Printer information'
+        - uuid: f98c4fc28d324f8db03e3c6a70fbe5c1
+          name: 'Уровень тонера % - чёрного'
+          type: CALCULATED
+          key: toner.level.black
+          delay: 10m
+          history: 1d
+          trends: 10d
+          units: '%'
+          params: '100*last(//left.printed.pages.black)/last(//max.toner.pages.black)'
+          tags:
+            - tag: Application
+              value: 'Consumables level %'
+          triggers:
+            - uuid: 74256e4e12f643a594bed37fe30f4be4
+              expression: 'last(/Kyocera_color/toner.level.black,#3)<5'
+              name: critical.toner.level.black
+              event_name: 'Уровень чёрного тонера меньше 5%'
+              priority: HIGH
+            - uuid: 14557f4b313a47b6a8439746ea6c495c
+              expression: 'last(/Kyocera_color/toner.level.black,#3)<20'
+              name: lower.toner.level.black
+              event_name: 'Уровень чёрного тонера меньше 20%'
+              priority: WARNING
+        - uuid: 2b1c193ab9154e04b0baae71952705a3
+          name: 'Уровень тонера % - голубого'
+          type: CALCULATED
+          key: toner.level.cyan
+          delay: 10m
+          history: 1d
+          trends: 10d
+          units: '%'
+          params: '100*last(//left.printed.pages.cyan)/last(//max.toner.pages.cyan)'
+          tags:
+            - tag: Application
+              value: 'Consumables level %'
+          triggers:
+            - uuid: 04485930bfcb422cb1633d4057ade082
+              expression: 'last(/Kyocera_color/toner.level.cyan,#3)<5'
+              name: critical.toner.level.cyan
+              event_name: 'Уровень голубого тонера меньше 5%'
+              priority: HIGH
+            - uuid: d11a5f7d933442bcadd5b72cbb9dcbc7
+              expression: 'last(/Kyocera_color/toner.level.cyan,#3)<20'
+              name: lower.toner.level.cyan
+              event_name: 'Уровень голубого тонера меньше 20%'
+              priority: WARNING
+        - uuid: 3a9cef049f7d4d03b5cfea77100dba4b
+          name: 'Уровень тонера % - пурпурного'
+          type: CALCULATED
+          key: toner.level.magenta
+          delay: 10m
+          history: 1d
+          trends: 10d
+          units: '%'
+          params: '100*last(//left.printed.pages.magenta)/last(//max.toner.pages.magenta)'
+          tags:
+            - tag: Application
+              value: 'Consumables level %'
+          triggers:
+            - uuid: 0cdbe5ceb8d44d8d87e94ece9f60d575
+              expression: 'last(/Kyocera_color/toner.level.magenta,#3)<5'
+              name: critical.toner.level.magenta
+              event_name: 'Уровень пурпурного тонера меньше 5%'
+              priority: HIGH
+            - uuid: d9f0983394784905afafb1475ee8e96f
+              expression: 'last(/Kyocera_color/toner.level.magenta,#3)<20'
+              name: lower.toner.level.magenta
+              event_name: 'Уровень пурпурного тонера меньше 20%'
+              priority: WARNING
+        - uuid: cb8c28bacb2741658c7f80f0159433a1
+          name: 'Уровень тонера % - жёлтого'
+          type: CALCULATED
+          key: toner.level.yellow
+          delay: 10m
+          history: 1d
+          trends: 10d
+          units: '%'
+          params: '100*last(//left.printed.pages.yellow)/last(//max.toner.pages.yellow)'
+          tags:
+            - tag: Application
+              value: 'Consumables level %'
+          triggers:
+            - uuid: e1f54c0ff80e4d21abcc2a60bac928bd
+              expression: 'last(/Kyocera_color/toner.level.yellow,#3)<5'
+              name: critcal.toner.level.yellow
+              event_name: 'Уровень жёлтого тонера меньше 5%'
+              priority: HIGH
+            - uuid: 4e36115cdc0b441099b63c9c9fdec303
+              expression: 'last(/Kyocera_color/toner.level.yellow,#3)<20'
+              name: lower.toner.level.yellow
+              event_name: 'Уровень жёлтого тонера меньше 20%'
+              priority: WARNING
+        - uuid: c6acfdce0fa7431b968a505606becf7b
+          name: 'Время работы'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.2.1.1.3.0
+          key: uptime.printer
+          history: 90d
+          trends: '0'
+          units: s
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '0.01'
+      dashboards:
+        - uuid: 6c2888c2cea94c86a59fc1919c74ca56
+          name: 'Toner level'
+          pages:
+            - widgets:
+                - type: graph
+                  width: '18'
+                  height: '6'
+                  fields:
+                    - type: GRAPH
+                      name: graphid
+                      value:
+                        host: Kyocera_color
+                        name: 'Уровень голубого тонера'
+                    - type: STRING
+                      name: reference
+                      value: AAAAA
+                    - type: INTEGER
+                      name: source_type
+                      value: '0'
+                - type: graph
+                  x: '18'
+                  width: '18'
+                  height: '6'
+                  fields:
+                    - type: GRAPH
+                      name: graphid
+                      value:
+                        host: Kyocera_color
+                        name: 'Уровень пурпурного тонера'
+                    - type: STRING
+                      name: reference
+                      value: AAAAB
+                    - type: INTEGER
+                      name: source_type
+                      value: '0'
+                - type: graph
+                  x: '36'
+                  width: '18'
+                  height: '6'
+                  fields:
+                    - type: GRAPH
+                      name: graphid
+                      value:
+                        host: Kyocera_color
+                        name: 'Уровень жёлтого тонера'
+                    - type: STRING
+                      name: reference
+                      value: AAAAC
+                    - type: INTEGER
+                      name: source_type
+                      value: '0'
+                - type: graph
+                  x: '54'
+                  width: '18'
+                  height: '6'
+                  fields:
+                    - type: GRAPH
+                      name: graphid
+                      value:
+                        host: Kyocera_color
+                        name: 'Уровень чёрного тонера'
+                    - type: STRING
+                      name: reference
+                      value: AAAAD
+                    - type: INTEGER
+                      name: source_type
+                      value: '0'
+  graphs:
+    - uuid: 6e3fb94490ff43b4a97979ae5ab9feb5
+      name: 'Распечатано страниц'
+      ymin_type_1: FIXED
+      ymax_type_1: FIXED
+      graph_items:
+        - color: 199C0D
+          calc_fnc: ALL
+          item:
+            host: Kyocera_color
+            key: pages.printed.total
+    - uuid: 88c5f3c7aaa04b9fbf434ebb42db6fde
+      name: 'Уровень голубого тонера'
+      width: '200'
+      ymin_type_1: FIXED
+      ymax_type_1: FIXED
+      graph_items:
+        - drawtype: GRADIENT_LINE
+          color: 00DDDD
+          item:
+            host: Kyocera_color
+            key: toner.level.cyan
+    - uuid: 5916fbc8057a4dd0ba95f0c4e688b7d9
+      name: 'Уровень жёлтого тонера'
+      width: '200'
+      ymin_type_1: FIXED
+      ymax_type_1: FIXED
+      graph_items:
+        - drawtype: GRADIENT_LINE
+          color: DDDD00
+          item:
+            host: Kyocera_color
+            key: toner.level.yellow
+    - uuid: 50dfb30d7eb94c67a39e1a78cf659b2e
+      name: 'Уровень пурпурного тонера'
+      width: '200'
+      ymin_type_1: FIXED
+      ymax_type_1: FIXED
+      graph_items:
+        - drawtype: GRADIENT_LINE
+          color: DD00DD
+          item:
+            host: Kyocera_color
+            key: toner.level.magenta
+    - uuid: 1c618161290944ed816b191032fd52eb
+      name: 'Уровень чёрного тонера'
+      width: '200'
+      ymin_type_1: FIXED
+      ymax_type_1: FIXED
+      graph_items:
+        - drawtype: GRADIENT_LINE
+          color: '000000'
+          item:
+            host: Kyocera_color
+            key: toner.level.black
